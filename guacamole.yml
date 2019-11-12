@@ -1,0 +1,125 @@
+---
+# Install on debian10 #
+  - name: "guacamole localhost playbook install"
+    hosts: localhost
+    tasks:
+      - name: "install guacamole ansible"
+        debug:
+          msg: "install guacamole dependances"
+
+      - name: "install packs"
+        package:
+          name: "{{ item }}"
+          state: present
+        loop:
+          - libcairo2
+          - libpng-dev
+#          - libfreerdp2-2
+          - libpango1.0-dev
+          - libssh2-1-dev
+          - libvncserver-dev
+          - libpulse-dev
+          - libssl-dev
+          - libvorbis-dev
+          - libossp-uuid-dev
+          - libavcodec-dev
+          - libavutil-dev
+          - libswscale-dev
+          - libtelnet-dev
+#          - freerdp2-dev
+          - libwebp-dev
+          - libwpd-dev
+          - gcc
+          - make
+          - dh-autoreconf
+          - tomcat9
+          - tomcat9-admin
+          - tomcat9-user
+          - tomcat9-common
+       
+      - name: stretch source list for freerdp 
+        copy:
+          dest: /etc/apt/sources.list.d/stretch.list
+          content: deb http://security.debian.org/debian-security stretch/updates main 
+          owner: root
+          mode: 0640
+       
+      - name: install freerdp from stretch repo
+        apt:
+          name: libfreerdp-dev
+          state: present
+          default_release: stretch
+          update_cache: yes
+       
+# freerdp 1 en attente dev pour freerdp2 
+
+      - name: guacamole dir
+        file:
+          path: /usr/local/guacamole
+          state: directory
+          owner: root
+          mode: 0755
+        
+      
+#      - name: download guacamole server in /usr/local/guacamole
+#        get_url:
+#          url: http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/1.0.0/source/guacamole-server-1.0.0.tar.gz
+#          dest: /usr/local/guacamole/guacamole-server.tar.gz
+#          mode: 640
+
+#      - name: unarchive guacamole server
+#        unarchive:
+#          src: /usr/local/guacamole/guacamole-server.tar.gz
+#          dest: /usr/local/guacamole/
+
+      - name: git clone guacamole
+        git:
+          repo: https://github.com/glyptodon/guacamole-server.git
+          dest: /usr/local/guacamole/guacamole-server 
+    
+      - name: create configure 
+        command: /usr/bin/autoreconf -fi 
+        args:
+          chdir: /usr/local/guacamole/guacamole-server
+
+      - name: create makefile
+        command: /usr/bin/sh configure
+        args:
+          chdir: /usr/local/guacamole/guacamole-server
+
+      - name: make
+        make:
+          chdir: /usr/local/guacamole/guacamole-server
+
+      - name: make install
+        make:
+          chdir: /usr/local/guacamole/guacamole-server
+          target: install
+
+      - name: ldconfig
+        command: /usr/sbin/ldconfig
+       
+
+      - name: get guacamol war
+        get_url:
+          url: http://apache.org/dyn/closer.cgi?action=download&filename=guacamole/1.0.0/binary/guacamole-1.0.0.war
+          dest: /var/lib/tomcat9/webapps/guacamole.war
+          mode: 0640
+          owner: tomcat
+        notify: tomcat
+
+      - name: create /etc/guacamole
+        file:
+          dest: /etc/guacamole
+          state: directory
+          mode: 0755
+          owner: tomcat
+        tags: dir
+
+
+    handlers:
+      - name: tomcat
+        service: 
+          name: tomcat9
+          state: restarted
+
