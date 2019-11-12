@@ -123,8 +123,8 @@
         copy:
           src: guacamole.properties
           dest: /etc/guacamole/guacamole.properties
-          owner: tomcat9
-          mode: 0600
+          owner: root
+          mode: 0644
         notify: tomcat
         tags: guaca
 
