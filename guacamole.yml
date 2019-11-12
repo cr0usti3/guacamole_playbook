@@ -43,7 +43,11 @@
           content: deb http://security.debian.org/debian-security stretch/updates main 
           owner: root
           mode: 0640
-       
+      
+      - name: 
+        apt:
+          update_cache: yes
+
       - name: install freerdp from stretch repo
         apt:
           name: libfreerdp-dev
