@@ -128,7 +128,7 @@
         notify: tomcat
         tags: guaca
 
-      - name: add 
+      - name: add default GUACAMOLE_HOME
         lineinfile:
           regex: '^GUACAMOLE_HOME=/etc/guacamole'
           path: /etc/default/tomcat9
