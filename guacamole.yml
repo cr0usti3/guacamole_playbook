@@ -101,7 +101,7 @@
           target: install
 
       - name: ldconfig
-        command: /usr/sbin/ldconfig
+        command: ldconfig
        
 
       - name: get guacamol war
