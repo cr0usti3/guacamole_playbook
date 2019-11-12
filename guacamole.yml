@@ -87,7 +87,7 @@
           chdir: /usr/local/guacamole/guacamole-server
 
       - name: create makefile
-        command: /usr/bin/sh configure
+        command: ./configure
         args:
           chdir: /usr/local/guacamole/guacamole-server
 
