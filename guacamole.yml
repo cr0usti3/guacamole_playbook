@@ -120,8 +120,8 @@
           owner: tomcat
 
       - name: /etc/guacamole/guacamole.properties
-        file:
-          src: files/guacamole.properties
+        copy:
+          src: guacamole.properties
           dest: /etc/guacamole/guacamole.properties
           owner: tomcat9
           mode: 0600
