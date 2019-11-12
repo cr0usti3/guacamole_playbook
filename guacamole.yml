@@ -118,8 +118,22 @@
           state: directory
           mode: 0755
           owner: tomcat
-        tags: dir
 
+      - name: /etc/guacamole/guacamole.properties
+        file:
+          src: guacamole.properties
+          dest: /etc/guacamole/guacamole.properties
+          ower: tomcat9
+          mode: 0600
+        notify: tomcat
+        tags: guaca
+
+      - name: add 
+        lineinfile:
+          regex: '^GUACAMOLE_HOME=/etc/guacamole'
+          path: /etc/default/tomcat9
+          line: GUACAMOLE_HOME=/etc/guacamole
+        tags: guaca
 
     handlers:
       - name: tomcat
