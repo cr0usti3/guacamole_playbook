@@ -139,7 +139,7 @@
           state: directory
           mode: 0755
           owner: root
-        tag: free
+        tags: free
 
       - name: link guacdr guacsnd 
         file:
@@ -149,7 +149,7 @@
         loop:
           - guacdr-client.so
           - guacsnd-client.so
-        tag: free
+        tags: free
 
     handlers:
       - name: tomcat
