@@ -126,14 +126,30 @@
           owner: root
           mode: 0644
         notify: tomcat
-        tags: guaca
 
       - name: add default GUACAMOLE_HOME
         lineinfile:
           regex: '^GUACAMOLE_HOME=/etc/guacamole'
           path: /etc/default/tomcat9
           line: GUACAMOLE_HOME=/etc/guacamole
-        tags: guaca
+
+      - name: create freerdp dir
+        file:
+          dest: /usr/lib/x86_64-linux-gnu/freerdp/
+          state: directory
+          mode: 0755
+          owner: root
+        tag: free
+
+      - name: link guacdr guacsnd 
+        file:
+          dest: "/usr/lib/x86_64-linux-gnu/freerdp/{{ item }}"
+          src: "/usr/local/lib/freerdp/{{ item }}"
+          state: link
+        loop:
+          - guacdr-client.so
+          - guacsnd-client.so
+        tag: free
 
     handlers:
       - name: tomcat
